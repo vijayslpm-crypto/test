@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Control Valve Calibration – MCQ</title>
+<style>
+:root{--bg:#f6f8f6;--card:#fff;--text:#1b2a20;--muted:#5b6b60;--accent:#1e7a3c;--border:#d5e0d8;--ok:#1e7a3c;--okbg:#e5f4ea;--bad:#b3261e;--badbg:#fbe9e7;--exp:#eef5ff;--expb:#bcd3f2}
+@media (prefers-color-scheme:dark){:root{--bg:#121a15;--card:#1b261f;--text:#e6efe9;--muted:#9bb0a2;--accent:#4cc27a;--border:#2f4036;--ok:#6fe09a;--okbg:#18351f;--bad:#ff8a80;--badbg:#3a1d1a;--exp:#17283d;--expb:#2f4a6b}}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--text);font:16px/1.5 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
+main{max-width:720px;margin:0 auto;padding:16px}
+h1{font-size:1.4rem;margin:8px 0 4px}
+.sub{color:var(--muted);margin:0 0 16px}
+.card,.q{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:16px;margin-bottom:16px}
+.q h2{font-size:1.05rem;margin:0 0 12px}
+.q h2 span{color:var(--accent)}
+input[type=text]{font:inherit;color:inherit;background:transparent;border:1px solid var(--border);border-radius:8px;padding:10px 12px;width:100%;margin:8px 0 12px}
+.opt{display:block;width:100%;text-align:left;font:inherit;color:inherit;background:transparent;border:1px solid var(--border);border-radius:8px;padding:10px 12px;margin-bottom:8px;cursor:pointer}
+.opt:hover:not(:disabled){border-color:var(--accent)}
+.opt.correct{background:var(--okbg);border-color:var(--ok)}
+.opt.wrong{background:var(--badbg);border-color:var(--bad)}
+.opt:disabled{cursor:default}
+.exp{display:none;margin-top:8px;background:var(--exp);border:1px solid var(--expb);border-radius:8px;padding:10px 12px;font-size:.95rem}
+.exp.show{display:block}
+#score{position:sticky;top:0;background:var(--bg);padding:8px 0;font-weight:600;z-index:5}
+.btn{font:inherit;background:var(--accent);color:#fff;border:0;border-radius:8px;padding:10px 16px;cursor:pointer}
+.err{color:var(--bad);font-size:.9rem;min-height:1.2em;margin:0 0 8px}
+#status{font-size:.95rem;margin-top:8px}
+.hide{display:none}
+</style>
+</head>
+<body>
+<main>
+<h1>Control Valve Calibration – MCQ</h1>
+<p class="sub">5 questions. Tap an option to see the answer and explanation.</p>
+
+<div class="card" id="start">
+  <label for="name"><strong>Your name</strong></label>
+  <input type="text" id="name" maxlength="50" placeholder="Priya Sharma" autocomplete="name">
+  <div class="err" id="nameErr"></div>
+  <button class="btn" id="startBtn">Start quiz</button>
+</div>
+
+<div id="quizWrap" class="hide">
+  <div id="score">Score: 0 / 5</div>
+  <div id="quiz"></div>
+  <div class="card hide" id="result">
+    <strong id="resultText"></strong>
+    <div id="status"></div>
+    <p><button class="btn" onclick="location.reload()">Restart quiz</button></p>
+  </div>
+</div>
+</main>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+import { getFirestore, collection, addDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+import { getAnalytics, isSupported } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-analytics.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyC1j8UZun7xVGjD9IW-j--pR61dgJN74XU",
+  authDomain: "trail-8ce1c.firebaseapp.com",
+  projectId: "trail-8ce1c",
+  storageBucket: "trail-8ce1c.firebasestorage.app",
+  messagingSenderId: "1084402828621",
+  appId: "1:1084402828621:web:b63f9296b0639824cb2304",
+  measurementId: "G-82YC5PELSF"
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+try { isSupported().then(ok => { if (ok) getAnalytics(app); }); } catch (e) {}
+
+const Q = [
+{q:"In the calibration procedure, what signal is applied to set the valve zero?",o:["0 mA","4 mA","12 mA","20 mA"],a:1,e:"Zero is set with a 4 mA signal, which is the lower range value (0%). At this point the valve should be fully closed, so the stem is adjusted until the valve reads 0%."},
+{q:"What happens when 20 mA is applied while setting the span?",o:["The valve closes to 0%","The valve moves to 50% open","The valve moves to 100% open","The valve stem is locked"],a:2,e:"20 mA is the upper range value (100%). The span is adjusted so that the stem reaches 100% open at 20 mA."},
+{q:"What is the recommended air supply pressure range shown for the calibration setup?",o:["0.5 – 1.0 bar","1.4 – 3.0 bar","4.0 – 6.0 bar","7.0 – 10.0 bar"],a:1,e:"The procedure specifies a clean, regulated air supply of 1.4 – 3.0 bar. Too low a pressure may prevent full stroke, and unclean air can damage the positioner."},
+{q:"When 16 mA is applied during the intermediate-point check, what valve position is expected?",o:["25% open","50% open","75% open","100% open"],a:2,e:"Position % = (mA − 4) ÷ 16 × 100. For 16 mA: (16 − 4) ÷ 16 × 100 = 75%. The other checkpoints are 8 mA = 25% and 12 mA = 50%."},
+{q:"After the final check confirms smooth operation from 0% to 100%, what is the next step?",o:["Re-adjust zero and span again","Record nothing and close the job","Remove the calibrator, tighten connections and return to normal operation","Increase the air supply to 3.0 bar"],a:2,e:"Step 8 is return to service: remove the loop calibrator, tighten all connections and restore normal operation. Calibration results should also be recorded, as listed in the important points."}
+];
+
+let done = 0, score = 0, trainee = "";
+const $ = id => document.getElementById(id);
+
+$("startBtn").onclick = () => {
+  const n = $("name").value.trim();
+  if (!n) { $("nameErr").textContent = "Enter your name to begin."; return; }
+  trainee = n;
+  $("start").classList.add("hide");
+  $("quizWrap").classList.remove("hide");
+  build();
+};
+$("name").oninput = () => { $("nameErr").textContent = ""; };
+
+function build() {
+  const box = $("quiz");
+  Q.forEach((item, i) => {
+    const d = document.createElement("div"); d.className = "q";
+    const h = document.createElement("h2");
+    h.innerHTML = "<span>Q" + (i + 1) + ".</span> ";
+    h.appendChild(document.createTextNode(item.q));
+    d.appendChild(h);
+    const ex = document.createElement("div"); ex.className = "exp";
+    const btns = [];
+    item.o.forEach((t, j) => {
+      const b = document.createElement("button");
+      b.className = "opt";
+      b.textContent = String.fromCharCode(65 + j) + ". " + t;
+      b.onclick = () => {
+        btns.forEach((x, k) => { x.disabled = true; if (k === item.a) x.classList.add("correct"); });
+        if (j === item.a) score++; else b.classList.add("wrong");
+        ex.innerHTML = "<strong>Answer: " + String.fromCharCode(65 + item.a) + ". " + item.o[item.a] + "</strong><br>" + item.e;
+        ex.classList.add("show");
+        done++;
+        $("score").textContent = "Score: " + score + " / " + Q.length;
+        if (done === Q.length) finish();
+      };
+      btns.push(b); d.appendChild(b);
+    });
+    d.appendChild(ex); box.appendChild(d);
+  });
+}
+
+async function finish() {
+  $("result").classList.remove("hide");
+  $("resultText").textContent = trainee + ", you scored " + score + " out of " + Q.length + ".";
+  $("status").textContent = "Saving your result…";
+  try {
+    await addDoc(collection(db, "quiz_results"), {
+      name: trainee,
+      score: score,
+      total: Q.length,
+      createdAt: serverTimestamp()
+    });
+    $("status").textContent = "Result saved.";
+  } catch (e) {
+    console.error(e);
+    $("status").textContent = "Couldn’t save your result. Tell your trainer.";
+  }
+  $("result").scrollIntoView({behavior: "smooth"});
+}
+</script>
+</body>
+</html>
